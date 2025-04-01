@@ -1,33 +1,28 @@
 // src/components/CityModal.jsx
 import { useState, useEffect } from "react";
-import { getOrganizations } from "../api/client/services";
+import { getCities } from "../api/client/services";
 import { SearchBar } from "./SearchBar";
 import "./modal.scss"; // Подключаем стили модалки
 
+import { addLocalJSON } from "../api/utils";
+import { serviceItem } from "../api/client/services";
 export function CityModal({ isOpen, onClose }) {
     const [search, setSearch] = useState("");
     const [cities, setCities] = useState([]);
 
-    useEffect(() => {
-        // При открытии модалки загружаем список городов
-        async function fetchCities() {
-            try {
-                const organizations = await getOrganizations();
-                const uniqueCities = [...new Set(organizations.map((org) => org.cityName))];
-                setCities(uniqueCities);
-            } catch (error) {
-                console.error("Ошибка при загрузке данных:", error);
-            }
+useEffect(() => {
+    async function fetchCities() {
+        try {
+            const organizations = await getCities(); // Работает корректно!
+            const uniqueCities = [...new Set(organizations.map(org => org.city))];
+            setCities(uniqueCities);
+        } catch (error) {
+            console.error("Ошибка при загрузке городов:", error);
         }
+    }
 
-        if (isOpen) {
-            fetchCities()
-                .then(() => {
-                    // успех
-                })
-                .catch((err) => console.error(err));
-        }
-    }, [isOpen]);
+    if (isOpen) fetchCities();
+}, [isOpen]);
 
     // Закрываем модалку, если кликнули на фон
     const handleOverlayClick = (e) => {
@@ -43,7 +38,7 @@ export function CityModal({ isOpen, onClose }) {
 
     // Выбор города
     const handleSelectCity = (city) => {
-        localStorage.setItem("selectedCity", city);
+        addLocalJSON(serviceItem.selectedData,"city", city)
         onClose();
     };
 

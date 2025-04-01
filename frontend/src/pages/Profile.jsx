@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Header } from "../components/Header";
-import { SearchBar } from "../components/SearchBar";
-import { ServicesList } from "../components/ServicesList";
-import { Modal } from "../components/Modal";
 
 import "../styles.scss";
 
@@ -69,7 +66,6 @@ export function Profile() {
                             onClick={async () => {
                                 try {
                                     await deleteCustomer()
-                                    localStorage.setItem("token", "")
                                 } catch (error) {
 
                                 }

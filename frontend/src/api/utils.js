@@ -13,7 +13,9 @@ export const getCookie = (name) => {
 // Проверка наличия токена
 export const getTokenOrThrow = () => {
     const token = getCookie("token")
-    if (!token) throw new Error('Токен не найден')
+    if (!token) {
+        throw new Error('Токен не найден')
+    }
     return token
 }
 
@@ -31,4 +33,35 @@ export const getWithToken = async (url) => {
     }
 
     return response.json();
+}
+
+// - POST-запрос, где требуется только токен и JSON тело
+export const postWithToken = async (url, body) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getTokenOrThrow()}`
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+    }
+    
+    return response.status === 200 ? null : response.json();
+};
+
+// Работа с localStorage в со JSON значением
+export const addLocalJSON = (item, key, value) => {
+    const storedData = localStorage.getItem(item)
+    let data = storedData ? JSON.parse(storedData) : {}
+    data[key] = value
+    localStorage.setItem(item, JSON.stringify(data))
+
+}
+
+export const getLocalJSON = (item, key) => {
+    const storedData = localStorage.getItem('selectedData')
+    const data = storedData ? JSON.parse(storedData) : {}
+    return key ? data[key] : data
 }
